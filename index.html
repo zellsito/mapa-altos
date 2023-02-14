@@ -1,151 +1,66 @@
+
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<head>
+		<title>leaflet-rotate.js</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
 
-    <!-- leaflet css -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-        crossorigin="" />
+		<!-- Leaflet JS / CSS -->
+		<script src="https://unpkg.com/leaflet@1.9/dist/leaflet-src.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9/dist/leaflet.css">
 
-    <!-- bootstrap -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+		<!-- Leaflet-Rotate -->
+		<script src="https://unpkg.com/leaflet-rotate@0.2.3/dist/leaflet-rotate-src.js"></script>
 
+		<!-- include some miscellaneous -->
+		<script src="https://unpkg.com/leaflet-rotate@0.2.3/misc/route.js"></script>
+		<script src="https://unpkg.com/leaflet-rotate@0.2.3/misc/places.js"></script>
+		<script src="https://unpkg.com/leaflet-rotate@0.2.3/misc/loremIpsum.js"></script>
+		<script src="https://unpkg.com/leaflet-rotate@0.2.3/lib/debug.js"></script>
 
-    <!-- jquery -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+		<style>
+			#map {
+				width: 100%;
+				height: 100vh;
+			}
+		</style>
+	</head>
 
-    <!-- leaflet js -->
-    <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
-        integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
-        crossorigin=""></script>
+	<body>
 
-    <title>Mapbox map</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <style type="text/css">
-        #map {
-            width: 100%;
-            height: 100vh;
-        }
-    </style>
-</head>
-
-<body>
-    
-    <div id="map"></div>
-    <script>
-      /*var map = new Map({
-              layers: [
-                new TileLayer({
-                  source: new OSM(),
-                }),
-              ],
-              target: 'map',
-              view: new View({
-                center: [-34.5800704,-58.6121216],
-                rotation: Math.PI / 6,
-                zoom: 17,
-              }),
-            });*/
-        var map = L.map('map', {
-          center: [-34.5800704,-58.6121216],
-          rotation: 180,
-          zoom: 17,
-        });//.setView([-34.5800704,-58.6121216], 17);        
-        L.tileLayer('https://api.tiles.mapbox.com/styles/v1/{username}/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+		<div id="map"></div>
+		<script>
+			var esri = L.tileLayer('https://api.tiles.mapbox.com/styles/v1/{username}/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
             username: 'iamtekson',
             id: 'cjwhym7s70tae1co8zf17a3r5',
             accessToken: 'pk.eyJ1IjoiaWFtdGVrc29uIiwiYSI6ImNqdjV4YzI4YjB0aXk0ZHBtNnVnNWxlM20ifQ.FjQJyCTodXASYtOK8IrLQA'
-        }).addTo(map);
+        });
+			var map = L.map('map', {
+				center: [-34.584,-58.612],
+				zoom: 17,
+				layers: [esri],
+				rotate: true,
+				bearing: 40,
+				attributionControl: false,
+				zoomControl: false,
+				touchGestures: false,
+				touchRotate: false,
+				touchZoom: false
+			});
 
-let fontSize = "30px";
-let svgGcTextId = "";
-let rotation = "48";
-let text = "M45";
-let latlng = [-34.583494, -58.614219];
-let marker, circle;
+			var layers = L.control.layers({
+				'Empty': L.tileLayer(''),
+				'Streets': osm,
+				'Satellite': esri,
+			}, null, {
+				collapsed: false
+			}).addTo(map);
 
-let svgIcon = L.divIcon({
-  html: `
-<svg
-  version="1.1"
-  id="${svgGcTextId}"
-  preserveAspectRatio="none"
-  xmlns="http://www.w3.org/2000/svg"
-  width="300"
-  height="300"
->
-  <text width="5000" height="5000" x="30" y="15" transform="rotate(${rotation})" font-size="${fontSize}">${text}</text>
-</svg>`,
-  className: "",
-  iconSize: [24, 10],
-  iconAnchor: [0, 0],
-});
+		</script>
 
-marker = L.marker(latlng, {
-  icon: svgIcon,
-  interactive: true
-});
-map.addLayer(marker);
-
-let referenceMarker = L.circleMarker(latlng, {radius: 5});
-map.addLayer(referenceMarker);
-        /*
-        var map = L.map('map').setView([-34.5800704,-58.6121216], 17);        
-        L.tileLayer('https://api.tiles.mapbox.com/styles/v1/{username}/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-            username: 'iamtekson',
-            id: 'cjwhym7s70tae1co8zf17a3r5',
-            accessToken: 'pk.eyJ1IjoiaWFtdGVrc29uIiwiYSI6ImNqdjV4YzI4YjB0aXk0ZHBtNnVnNWxlM20ifQ.FjQJyCTodXASYtOK8IrLQA'
-        }).addTo(map);
-
-        L.marker([-34.583494, -58.614219]).addTo(map)
-            .bindPopup('M45')
-            .openPopup();
-
-*/
-            if(!navigator.geolocation) {
-        console.log("Your browser doesn't support geolocation feature!")
-    } else {
-        navigator.geolocation.getCurrentPosition(getPosition)
-    }
-    
-
-    function getPosition(position){
-        var lat = position.coords.latitude
-        var long = position.coords.longitude
-        var accuracy = position.coords.accuracy
-      /*
-        if(marker) {
-            map.removeLayer(marker)
-        }
-
-        if(circle) {
-            map.removeLayer(circle)
-        }*/
-
-        marker = L.marker([lat, long])
-        //circle = L.circle([lat, long], {radius: accuracy})
-
-        var featureGroup = L.featureGroup([marker/*, circle*/]).addTo(map)
-
-        map.fitBounds(featureGroup.getBounds())
-
-        console.log("Your coordinate is: Lat: "+ lat +" Long: "+ long+ " Accuracy: "+ accuracy)
-    }
-
-
-            
-    </script>
-
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
-</body>
+	</body>
 
 </html>
