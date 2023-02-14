@@ -38,7 +38,24 @@
     
     <div id="map"></div>
     <script>
-        var map = L.map('map').setView([-34.5800704,-58.6121216], 17);        
+      /*var map = new Map({
+              layers: [
+                new TileLayer({
+                  source: new OSM(),
+                }),
+              ],
+              target: 'map',
+              view: new View({
+                center: [-34.5800704,-58.6121216],
+                rotation: Math.PI / 6,
+                zoom: 17,
+              }),
+            });*/
+        var map = L.map('map', {
+          center: [-34.5800704,-58.6121216],
+          rotation: 180,
+          zoom: 17,
+        });//.setView([-34.5800704,-58.6121216], 17);        
         L.tileLayer('https://api.tiles.mapbox.com/styles/v1/{username}/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
             attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
             username: 'iamtekson',
@@ -51,6 +68,7 @@ let svgGcTextId = "";
 let rotation = "48";
 let text = "M45";
 let latlng = [-34.583494, -58.614219];
+let marker, circle;
 
 let svgIcon = L.divIcon({
   html: `
@@ -69,7 +87,7 @@ let svgIcon = L.divIcon({
   iconAnchor: [0, 0],
 });
 
-let marker = L.marker(latlng, {
+marker = L.marker(latlng, {
   icon: svgIcon,
   interactive: true
 });
@@ -90,41 +108,38 @@ map.addLayer(referenceMarker);
             .bindPopup('M45')
             .openPopup();
 
-
+*/
             if(!navigator.geolocation) {
         console.log("Your browser doesn't support geolocation feature!")
     } else {
-        setInterval(() => {
-            navigator.geolocation.getCurrentPosition(getPosition)
-        }, 5000);
+        navigator.geolocation.getCurrentPosition(getPosition)
     }
-
-    var marker, circle;
+    
 
     function getPosition(position){
         var lat = position.coords.latitude
         var long = position.coords.longitude
         var accuracy = position.coords.accuracy
-
+      /*
         if(marker) {
             map.removeLayer(marker)
         }
 
         if(circle) {
             map.removeLayer(circle)
-        }
+        }*/
 
         marker = L.marker([lat, long])
-        circle = L.circle([lat, long], {radius: accuracy})
+        //circle = L.circle([lat, long], {radius: accuracy})
 
-        var featureGroup = L.featureGroup([marker, circle]).addTo(map)
+        var featureGroup = L.featureGroup([marker/*, circle*/]).addTo(map)
 
         map.fitBounds(featureGroup.getBounds())
 
         console.log("Your coordinate is: Lat: "+ lat +" Long: "+ long+ " Accuracy: "+ accuracy)
     }
 
-*/
+
             
     </script>
 
